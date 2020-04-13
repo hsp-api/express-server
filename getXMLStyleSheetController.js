@@ -1,5 +1,4 @@
 const express = require('express');
-
 const axios = require('axios');
 
 const cheerio = require('cheerio');
@@ -7,15 +6,17 @@ const cheerio = require('cheerio');
 function GetXMLStyleSheetController() {
 }
 
-GetXMLStyleSheetController.prototype.getXMLStyleSheet = function (request, response) {
+GetXMLStyleSheetController.prototype.getXMLStyleSheet =  (request, response) => {
 
     axios.post(`https://ghs-hsp-dotnet-w-service01.azurewebsites.net/common/api/Common/GetXMLStyleSheet`, request.body)
         .then(res => {
-            var htmlResponse = res.data.htmlResult;
-         htmlResponse = htmlResponse.toString().replace(/[^\x20-\x7E]/gmi, "");
-            var $ = cheerio.load(htmlResponse);
-            $('base').attr("href", './styleSheets');
+            let htmlResponse = res.data.htmlResult;
+            htmlResponse = JSON.stringify(JSON.parse(htmlResponse));
+             const $ = cheerio.load(htmlResponse);
+             $('base').attr("href", './static');
             response.json({ data: $.html(), ok: true });
+        }).catch(error => {
+            response.json({ error: error});
         })
 }
 
